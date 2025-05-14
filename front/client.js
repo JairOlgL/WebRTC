@@ -1,10 +1,11 @@
-const socket = io('http://localhost:6532');
+const socket = io('http://192.168.100.123:6532');
 const llamar = document.getElementById('callButton');
 const config = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
 }
 const peerConnection = new RTCPeerConnection(config);
 const localVideo = document.querySelector('#localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
 let localStream;
 let idEmisor;
 
@@ -20,26 +21,37 @@ const startMedia = async () => {
   }
 }
 
-llamar.onclick = () => {
+llamar.onclick = async () => {
   const idReceptor = document.getElementById('toCall').value;
-  peerConnection.createOffer()
+  await peerConnection.createOffer()
   .then(offer => peerConnection.setLocalDescription(offer))
   .then(() => {
     socket.emit('signal', {offer: peerConnection.localDescription, idReceptor});
   })
+}
+peerConnection.onicecandidate = ({candidate}) => {
+  const idReceptor = document.getElementById('toCall').value;
+  if(candidate) socket.emit('signal', {candidate, idReceptor});
+}
+peerConnection.ontrack = event => {
+  remoteVideo.srcObject = peerConnection.getRemoteStreams()[0]
 }
 
 socket.on('getID', id => {
   idEmisor = id;
   document.getElementById('id').innerHTML = idEmisor;
 })
-socket.on('signal', ({offer}) => {
-  peerConnection.setRemoteDescription(offer)
-  .then(() => peerConnection.createAnswer())
-  .then(answer  => peerConnection.setLocalDescription(answer))
-  .then(() => {
-    socket.emit('signal', {answer: peerConnection.localDescription, idEmisor});
-  })
+socket.on('signal', async ({offer, candidate, idEmisor, answer}) => {
+  if(offer){
+    await peerConnection.setRemoteDescription(offer)
+    .then(async() => await peerConnection.createAnswer())
+    .then(async answer  => await peerConnection.setLocalDescription(answer))
+    .then(() => {
+      socket.emit('signal', {answer: peerConnection.localDescription, idEmisor});
+    })
+  }
+  if(answer) await peerConnection.setRemoteDescription(answer);
+  if(candidate) await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
 })
 
 startMedia();

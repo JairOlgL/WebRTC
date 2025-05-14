@@ -9,6 +9,11 @@ io.on('connection', socket => {
     socket.on('video1', video => {
         io.emit('video2', video)
     })
+    socket.on('signal', ({offer, answer, idEmisor, idReceptor, candidate}) => {
+        if(offer && idReceptor) io.to(idReceptor).emit('signal', {offer, idEmisor: socket.id})
+        if(answer && idEmisor) io.to(idEmisor).emit('signal', {answer});
+        if(candidate && idReceptor) io.to(idReceptor).emit('signal', {candidate});
+    })
 })
 
 io.listen(port);
