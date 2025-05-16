@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const socket = io('http://192.168.100.100:6532');
+=======
+const socket = io('http://192.168.100.123:6532');
+>>>>>>> 2800fbb5e4a72dcb87ddac9f4a23f5515e1ae69a
 const llamar = document.getElementById('callButton');
 const config = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
