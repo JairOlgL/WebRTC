@@ -3,8 +3,8 @@ const fs = require('fs');
 const https = require('https');
 
 const options = {
-    key: fs.readFileSync('/etc/nginx/certs/liberstreaming.hcd-key.pem'),
-    cert: fs.readFileSync('/etc/nginx/certs/liberstreaming.hcd.pem')
+    key: fs.readFileSync('/mnt/Repos/.certs/192.168.100.100-key.pem'),
+    cert: fs.readFileSync('/mnt/Repos/.certs/192.168.100.100.pem')
 }
 const httpsServer = https.createServer(options, (req, res) => {
     res.writeHead('200');
