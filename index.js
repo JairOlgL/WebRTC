@@ -1,6 +1,16 @@
 const { Server } = require('socket.io');
+const fs = require('fs');
+const https = require('https');
 
-const io = new Server({cors: {origin: '*'}});
+const options = {
+    key: fs.readFileSync('/etc/nginx/certs/liberstreaming.hcd-key.pem'),
+    cert: fs.readFileSync('/etc/nginx/certs/liberstreaming.hcd.pem')
+}
+const httpsServer = https.createServer(options, (req, res) => {
+    res.writeHead('200');
+    res.end('Servidor Socket.IO activo');
+})
+const io = new Server(httpsServer, {cors: {origin: '*'}});
 const port = 6532;
 
 io.on('connection', socket => {
@@ -16,4 +26,6 @@ io.on('connection', socket => {
     })
 })
 
-io.listen(port);
+httpsServer.listen(port, () => {
+    console.log('Servidor HTTPS iniciado');
+})
