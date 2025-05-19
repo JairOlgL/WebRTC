@@ -12,14 +12,16 @@ document.getElementById('compartir').onclick = async() => {
     localVideo.srcObject = sharedScreen;
     const senders = peerConnection.getSenders();
     const auxVideo = senders.find(sender => sender.track.kind == 'video');
-    const auxAudio = senders.find(sender => sender.track.kind == 'video');
-    await auxVideo.replaceTrack(sharedScreen.getTracks()[0]);
-    await auxAudio.replaceTrack(sharedScreen.getTracks()[0]);
+    const auxAudio = senders.find(sender => sender.track.kind == 'audio');
+    await auxVideo.replaceTrack(sharedScreen.getVideoTracks()[0]);
+    await auxAudio.replaceTrack(sharedScreen.getAudioTracks()[0]);
 
     sharedScreen.getVideoTracks()[0].addEventListener('ended', async() => {
         localVideo.srcObject = localStream;
         const senders = peerConnection.getSenders();
-        const aux = senders.find(sender => sender.track.kind == 'video');
-        await aux.replaceTrack(localStream.getTracks()[0]);
+        const auxVideo = senders.find(sender => sender.track.kind == 'video');
+        const auxAudio = senders.find(sender => sender.track.kind == 'audio');
+        await auxVideo.replaceTrack(localStream.getVideoTracks()[0]);
+        await auxAudio.replaceTrack(localStream.getAudioTracks()[0]);
     })
 }
