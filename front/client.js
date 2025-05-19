@@ -1,4 +1,5 @@
-const socket = io('https://192.168.100.100:6532');
+const { server } = require(`${__dirname}/../credentials.js`)
+const socket = io(server);
 const llamar = document.getElementById('callButton');
 const config = {
   iceServers: [{urls: 'stun:stun.l.google.com:19302'}]

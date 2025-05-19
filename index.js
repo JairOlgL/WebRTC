@@ -1,17 +1,17 @@
 const { Server } = require('socket.io');
 const fs = require('fs');
 const https = require('https');
+const { port, key, cert } = require('./credentials.js');
 
 const options = {
-    key: fs.readFileSync('/mnt/Repos/.certs/192.168.100.100-key.pem'),
-    cert: fs.readFileSync('/mnt/Repos/.certs/192.168.100.100.pem')
+    key: fs.readFileSync(key),
+    cert: fs.readFileSync(cert)
 }
 const httpsServer = https.createServer(options, (req, res) => {
     res.writeHead('200');
     res.end('Servidor Socket.IO activo');
 })
 const io = new Server(httpsServer, {cors: {origin: '*'}});
-const port = 6532;
 
 io.on('connection', socket => {
     console.log(`Usuario ${socket.id} conectado.`);
@@ -27,5 +27,5 @@ io.on('connection', socket => {
 })
 
 httpsServer.listen(port, () => {
-    console.log('Servidor HTTPS iniciado');
+    console.log(`Servidor HTTPS iniciado`);
 })
