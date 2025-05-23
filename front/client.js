@@ -40,13 +40,17 @@ peerConnection.ontrack = event => {
   remoteVideo.style.display = 'block'
   remoteVideo.srcObject = peerConnection.getRemoteStreams()[0]
   if(peerConnection.getRemoteStreams()[1]){
+    remoteVideo.style.gridColumn = '1/2';
     remoteStreaming.style.display = 'block';
     remoteStreaming.srcObject = peerConnection.getRemoteStreams()[1];
   }
 }
 peerConnection.onnegotiationneeded = async event => {
-  peerConnection.createOffer()
-  .then(offer => peerConnection.setLocalDescription(offer))
+  await peerConnection.createOffer()
+  .then(offer => {
+    offer.sdp = offer.sdp.replace(/a=fmtp:opus (.+)/g, 'a=fmtp:opus maxaveragebitrate=510000; stereo=1; sprop-stereo=1; maxplaybackrate=48000; useinbandfec=1; usedtx=0;').replace(/a=rtpmap:(\d+) opus\/48000\/2/g, 'a=rtpmap:$1 opus/48000/2\r\na=maxaveragebitrate:510000\r\na=stereo:1\r\na=sprop-stereo:1');
+    return peerConnection.setLocalDescription(offer);
+  })
   .then(() => {
     socket.emit('signal', {offer: peerConnection.localDescription, idReceptor: sessionStorage.idReceptor});
   })
@@ -59,7 +63,7 @@ socket.on('getID', id => {
 })
 socket.on('signal', async ({offer, candidate, idEmisor, answer}) => {
   if(offer){
-    alert(idEmisor);
+    //alert(idEmisor);
     await peerConnection.setRemoteDescription(offer)
     .then(async() => await peerConnection.createAnswer())
     .then(async answer  => await peerConnection.setLocalDescription(answer))

@@ -5,13 +5,33 @@ body{
     box-sizing: border-box;
 }
 video{
-    width: 200px;
+    width: 100%;
+    border-radius: 10px;
+    max-height: calc(50dvh - 32px);
 }
 #streamVideos{
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
+    gap: 16px;
+    max-height: 100dvh;
 }
 #handlers{
-
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #111;
+    padding: 16px;
+    border-radius: 15px;
+    color: #fff;
+}
+#handlers p{
+    display: inline;
+}
+#remoteVideo, #remoteStreaming{
+    grid-row: 2/3;
+}
+#localVideo, #remoteVideo{
+    grid-column: 1/3;
 }
