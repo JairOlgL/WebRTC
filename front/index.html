@@ -9,8 +9,12 @@
     </style>
 </head>
 <body>
-    <video id="localVideo" autoplay muted></video>
-    <video id="remoteVideo" autoplay></video>
+    <div id="streamVideos">
+        <video id="localVideo" autoplay muted></video>
+        <video id="localStreaming" autoplay muted style="display: none;"></video>
+        <video id="remoteVideo" autoplay style="display: none;"></video>
+        <video id="remoteStreaming" autoplay style="display: none;"></video>
+    </div>
     <div id="handlers">
         <input type="text" id="toCall">
         <button id="callButton">Llamar</button>

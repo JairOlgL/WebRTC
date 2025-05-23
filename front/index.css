@@ -1,10 +1,17 @@
 body{
     margin: 0;
-    padding: 0;
+    padding: 32px;
     height: 100dvh;
-    display: grid;
-    justify-content: center;
+    box-sizing: border-box;
 }
 video{
     width: 200px;
+}
+#streamVideos{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+}
+#handlers{
+
 }
