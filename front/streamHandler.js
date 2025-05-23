@@ -9,7 +9,11 @@ document.getElementById('compartir').onclick = async() => {
         video: {cursor: 'always'},
         audio: true
     })
-    localVideo.srcObject = sharedScreen;
+    peerConnection.addTrack(sharedScreen.getVideoTracks()[0], sharedScreen);
+    peerConnection.addTrack(sharedScreen.getAudioTracks()[0], sharedScreen);
+    document.getElementById('localStreaming').style.display = 'block';
+    document.getElementById('localStreaming').srcObject = sharedScreen;
+    /* localVideo.srcObject = sharedScreen;
     const senders = peerConnection.getSenders();
     const auxVideo = senders.find(sender => sender.track.kind == 'video');
     const auxAudio = senders.find(sender => sender.track.kind == 'audio');
@@ -23,5 +27,5 @@ document.getElementById('compartir').onclick = async() => {
         const auxAudio = senders.find(sender => sender.track.kind == 'audio');
         await auxVideo.replaceTrack(localStream.getVideoTracks()[0]);
         await auxAudio.replaceTrack(localStream.getAudioTracks()[0]);
-    })
+    }) */
 }

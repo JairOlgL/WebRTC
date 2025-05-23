@@ -6,6 +6,8 @@ const config = {
 const peerConnection = new RTCPeerConnection(config);
 const localVideo = document.querySelector('#localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
+const localStreaming = document.getElementById('localStreaming');
+const remoteStreaming = document.getElementById('remoteStreaming');
 let localStream;
 let idEmisor;
 
@@ -23,6 +25,7 @@ const startMedia = async () => {
 
 llamar.onclick = async () => {
   const idReceptor = document.getElementById('toCall').value;
+  sessionStorage.idReceptor = idReceptor;
   await peerConnection.createOffer()
   .then(offer => peerConnection.setLocalDescription(offer))
   .then(() => {
@@ -34,10 +37,23 @@ peerConnection.onicecandidate = ({candidate}) => {
   if(candidate) socket.emit('signal', {candidate, idReceptor});
 }
 peerConnection.ontrack = event => {
+  remoteVideo.style.display = 'block'
   remoteVideo.srcObject = peerConnection.getRemoteStreams()[0]
+  if(peerConnection.getRemoteStreams()[1]){
+    remoteStreaming.style.display = 'block';
+    remoteStreaming.srcObject = peerConnection.getRemoteStreams()[1];
+  }
+}
+peerConnection.onnegotiationneeded = async event => {
+  peerConnection.createOffer()
+  .then(offer => peerConnection.setLocalDescription(offer))
+  .then(() => {
+    socket.emit('signal', {offer: peerConnection.localDescription, idReceptor: sessionStorage.idReceptor});
+  })
 }
 
 socket.on('getID', id => {
+  sessionStorage.idEmisor = id;
   idEmisor = id;
   document.getElementById('id').innerHTML = idEmisor;
 })
