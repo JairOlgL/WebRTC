@@ -11,9 +11,6 @@ document.getElementById('compartir').onclick = async() => {
     const sharedScreen = await navigator.mediaDevices.getDisplayMedia({
         video: {
             cursor: 'always',
-            /* width: {ideal: 1920},
-            height: {ideal: 1080},
-            frameRate: {max: 10000000} */
         },
         audio: {
             channelCount: 2,
@@ -26,15 +23,14 @@ document.getElementById('compartir').onclick = async() => {
         }
     })
     const sharedScreenAux = peerConnection.getLocalStreams()[1];
-    peerConnection.addTrack(sharedScreen.getVideoTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
-    peerConnection.addTrack(sharedScreen.getAudioTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
+    const videoTrack = peerConnection.addTrack(sharedScreen.getVideoTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
+    const audioTrack = peerConnection.addTrack(sharedScreen.getAudioTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
     localVideo.style.gridColumn = '1/2';
     document.getElementById('localStreaming').style.display = 'block';
     document.getElementById('localStreaming').srcObject = sharedScreen;
     sharedScreen.getVideoTracks()[0].addEventListener('ended', event => {
-        peerConnection.getLocalStreams()[1].forEach(element => {
-            peerConnection.removeTrack(element, peerConnection.getLocalStreams()[1])
-        });
+        peerConnection.removeTrack(videoTrack);
+        peerConnection.removeTrack(audioTrack);
         localVideo.style.gridColumn = '';
         localStreaming.style.display = '';
     })
