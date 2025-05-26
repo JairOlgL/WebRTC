@@ -17,14 +17,26 @@ video{
     max-height: 100dvh;
 }
 #handlers{
+    display: flex;
+    align-items: center;
     position: absolute;
-    top: 32px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #111;
     padding: 16px;
     border-radius: 15px;
     color: #fff;
+    gap: 8px;
+    font-size: 20px;
+}
+#handlers img{
+    width: 32px;
+}
+#handlers input{
+    height: 24px;
+    border-radius: 5px;
+    outline: none;
 }
 #handlers p{
     display: inline;
