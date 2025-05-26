@@ -43,6 +43,10 @@ peerConnection.ontrack = event => {
     remoteVideo.style.gridColumn = '1/2';
     remoteStreaming.style.display = 'block';
     remoteStreaming.srcObject = peerConnection.getRemoteStreams()[1];
+    remoteStreaming.srcObject.oninactive = () => {
+      remoteStreaming.style.display = 'none';
+      remoteVideo.style.gridColumn = '';
+    }
   }
 }
 peerConnection.onnegotiationneeded = async event => {
@@ -68,6 +72,7 @@ socket.on('signal', async ({offer, candidate, idEmisor, answer}) => {
     .then(async() => await peerConnection.createAnswer())
     .then(async answer  => await peerConnection.setLocalDescription(answer))
     .then(() => {
+      sessionStorage.idReceptor = idEmisor;
       socket.emit('signal', {answer: peerConnection.localDescription, idEmisor});
     })
   }
