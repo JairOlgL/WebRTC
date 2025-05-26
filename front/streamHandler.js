@@ -1,8 +1,11 @@
-document.getElementById('camara').onclick = () => {
+document.getElementById('camara').onclick = event => {
+    event.target.src = /Video.svg/.test(event.target.src) ? './mage icons/bulk/Video Cross.svg' : './mage icons/bulk/Video.svg';
     localStream.getVideoTracks()[0].enabled = !localStream.getVideoTracks()[0].enabled;
+
 }
-document.getElementById('mute').onclick = () => {
+document.getElementById('mute').onclick = event => {
     localStream.getAudioTracks()[0].enabled = !localStream.getAudioTracks()[0].enabled;
+    event.target.src = /Microphone.svg/.test(event.target.src) ? './mage icons/bulk/Microphone Mute.svg' : './mage icons/bulk/Microphone.svg';
 }
 document.getElementById('compartir').onclick = async() => {
     const sharedScreen = await navigator.mediaDevices.getDisplayMedia({
@@ -13,21 +16,25 @@ document.getElementById('compartir').onclick = async() => {
             frameRate: {max: 10000000} */
         },
         audio: {
-            channelCount: 2,           // Estéreo
-            sampleRate: 48000,         // 48 kHz (calidad estudio)
-            sampleSize: 24,            // 24 bits por muestra
-            volume: 1.0,               // Volumen máximo
-            autoGainControl: false,    // ¡Crítico! Desactiva normalización automática
-            noiseSuppression: false,   // Desactiva filtros de voz
-            echoCancellation: false    // Evita procesamiento adicional
+            channelCount: 2,
+            sampleRate: 48000,
+            sampleSize: 24,
+            volume: 1.0,
+            autoGainControl: false,
+            noiseSuppression: false,
+            echoCancellation: false
         }
     })
-    peerConnection.addTrack(sharedScreen.getVideoTracks()[0], sharedScreen);
-    peerConnection.addTrack(sharedScreen.getAudioTracks()[0], sharedScreen);
+    const sharedScreenAux = peerConnection.getLocalStreams()[1];
+    peerConnection.addTrack(sharedScreen.getVideoTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
+    peerConnection.addTrack(sharedScreen.getAudioTracks()[0], sharedScreenAux ? sharedScreenAux : sharedScreen);
     localVideo.style.gridColumn = '1/2';
     document.getElementById('localStreaming').style.display = 'block';
     document.getElementById('localStreaming').srcObject = sharedScreen;
     sharedScreen.getVideoTracks()[0].addEventListener('ended', event => {
+        peerConnection.getLocalStreams()[1].forEach(element => {
+            peerConnection.removeTrack(element, peerConnection.getLocalStreams()[1])
+        });
         localVideo.style.gridColumn = '';
         localStreaming.style.display = '';
     })
