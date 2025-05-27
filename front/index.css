@@ -8,6 +8,9 @@ video{
     width: 100%;
     border-radius: 10px;
     max-height: calc(50dvh - 32px);
+    aspect-ratio: 16/9;
+    background-color: #000;
+    max-width: max-content;
 }
 #streamVideos{
     display: grid;
@@ -15,6 +18,7 @@ video{
     width: 100%;
     gap: 16px;
     max-height: 100dvh;
+    justify-items: center;
 }
 #handlers{
     display: flex;
@@ -32,6 +36,7 @@ video{
 }
 #handlers img{
     width: 32px;
+    cursor: pointer;
 }
 #handlers input{
     height: 24px;
