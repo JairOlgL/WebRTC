@@ -10,6 +10,7 @@ const localStreaming = document.getElementById('localStreaming');
 const remoteStreaming = document.getElementById('remoteStreaming');
 let localStream;
 let idEmisor;
+let dataChannel;
 
 const startMedia = async () => {
   try {
@@ -24,6 +25,19 @@ const startMedia = async () => {
 }
 
 llamar.onclick = async () => {
+  dataChannel = peerConnection.createDataChannel('chat', {
+    ordered: true,
+    reliable: true
+  })
+  dataChannel.onopen = () => {
+    console.log('Canal de chat listo.');
+  }
+  dataChannel.onmessage = event => {
+    console.log(`Mensaje recibido: ${event.data}`);
+    const remoteMessage = document.createElement('p');
+    remoteMessage.innerHTML = `<b>Remoto:</b> ${event.data}`;
+    document.getElementById('chatContainer').appendChild(remoteMessage);
+}
   const idReceptor = document.getElementById('toCall').value;
   sessionStorage.idReceptor = idReceptor;
   await peerConnection.createOffer()
@@ -67,7 +81,6 @@ socket.on('getID', id => {
 })
 socket.on('signal', async ({offer, candidate, idEmisor, answer}) => {
   if(offer){
-    //alert(idEmisor);
     await peerConnection.setRemoteDescription(offer)
     .then(async() => await peerConnection.createAnswer())
     .then(async answer  => await peerConnection.setLocalDescription(answer))
