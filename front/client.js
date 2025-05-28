@@ -29,6 +29,15 @@ llamar.onclick = async () => {
     ordered: true,
     reliable: true
   })
+  dataChannel.onopen = () => {
+    console.log('Canal de chat listo.');
+  }
+  dataChannel.onmessage = event => {
+    console.log(`Mensaje recibido: ${event.data}`);
+    const remoteMessage = document.createElement('p');
+    remoteMessage.innerHTML = `<b>Remoto:</b> ${event.data}`;
+    document.getElementById('chatContainer').appendChild(remoteMessage);
+}
   const idReceptor = document.getElementById('toCall').value;
   sessionStorage.idReceptor = idReceptor;
   await peerConnection.createOffer()

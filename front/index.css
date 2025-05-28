@@ -3,6 +3,8 @@ body{
     padding: 32px;
     height: 100dvh;
     box-sizing: border-box;
+    overflow: hidden;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 video{
     width: 100%;
@@ -51,4 +53,41 @@ video{
 }
 #localVideo, #remoteVideo{
     grid-column: 1/3;
+}
+#chatContainer{
+    width: 640px;
+    height: 100dvh;
+    position: absolute;
+    background-color: #111;
+    top: 0px;
+    right: -640px;
+    transition: .5s;
+    padding: 16px 64px;
+    box-sizing: border-box;
+}
+#chatContainer p{
+    color: #fff;
+    animation: chatMessage 0.5s;
+    font-size: 20px;
+}
+#chatInput{
+    width: 90%;
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 32px;
+    border-radius: 15px;
+    outline: none;
+}
+
+@keyframes chatMessage {
+    0%{
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
 }
